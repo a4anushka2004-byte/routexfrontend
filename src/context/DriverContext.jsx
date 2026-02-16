@@ -5,13 +5,15 @@ const DriverContext = createContext();
 
 export const useDriver = () => useContext(DriverContext);
 
+import { SocketProvider } from './SocketContext';
+
 export const DriverProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isOnline, setIsOnline] = useState(false);
     const [activeOrder, setActiveOrder] = useState(null);
     const [walletBalance, setWalletBalance] = useState(0);
 
-    // Load initial state
+    // ... existing useEffect and functions ...
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
@@ -22,13 +24,30 @@ export const DriverProvider = ({ children }) => {
     const fetchProfile = async () => {
         try {
             const userData = await api.getProfile();
-            const walletData = await api.getWalletBalance();
-            setUser(userData);
+            const walletInfo = await api.getWallet();
+            setUser({ ...userData, role: localStorage.getItem('role'), _id: userData._id });
+            localStorage.setItem('userId', userData._id);
             setIsOnline(userData.isOnline);
-            setWalletBalance(walletData.walletBalance);
+            setWalletBalance(walletInfo.wallet.balance);
         } catch (error) {
             console.error('Failed to fetch profile', error);
             logout();
+        }
+    };
+
+    const register = async (userData) => {
+        try {
+            const data = await api.register(userData);
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('role', data.role);
+            localStorage.setItem('userId', data._id);
+            if (data.zone) localStorage.setItem('zoneId', data.zone);
+            setUser(data);
+            setIsOnline(data.isOnline);
+            setWalletBalance(data.walletBalance || 0);
+            return data;
+        } catch (error) {
+            throw error;
         }
     };
 
@@ -36,9 +55,12 @@ export const DriverProvider = ({ children }) => {
         try {
             const data = await api.login(email, password);
             localStorage.setItem('token', data.token);
+            localStorage.setItem('role', data.role);
+            localStorage.setItem('userId', data._id);
+            if (data.zone) localStorage.setItem('zoneId', data.zone);
             setUser(data);
             setIsOnline(data.isOnline);
-            setWalletBalance(data.walletBalance);
+            setWalletBalance(data.walletBalance || 0);
             return data;
         } catch (error) {
             throw error;
@@ -47,6 +69,9 @@ export const DriverProvider = ({ children }) => {
 
     const logout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        localStorage.removeItem('zoneId');
+        localStorage.removeItem('userId');
         setUser(null);
         setIsOnline(false);
         setWalletBalance(0);
@@ -99,20 +124,24 @@ export const DriverProvider = ({ children }) => {
     };
 
     return (
-        <DriverContext.Provider value={{
-            user,
-            login,
-            logout,
-            isOnline,
-            activeOrder,
-            walletBalance,
-            toggleOnline,
-            startShift,
-            goOffline,
-            acceptOrder,
-            completeOrder
-        }}>
-            {children}
-        </DriverContext.Provider>
+        <SocketProvider userId={user?._id}>
+            <DriverContext.Provider value={{
+                user,
+                setUser,
+                login,
+                register,
+                logout,
+                isOnline,
+                activeOrder,
+                walletBalance,
+                toggleOnline,
+                startShift,
+                goOffline,
+                acceptOrder,
+                completeOrder
+            }}>
+                {children}
+            </DriverContext.Provider>
+        </SocketProvider>
     );
 };

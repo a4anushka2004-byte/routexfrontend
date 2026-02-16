@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import { useDriver } from '../context/DriverContext';
 
@@ -8,15 +9,30 @@ function LandingPage() {
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('');
     const navigate = useNavigate();
-    const { login } = useDriver();
-    const [error, setError] = useState('');
+    const { login, logout } = useDriver();
 
     const handleLogin = async () => {
+        if (!role) {
+            toast.error('Please select a partner type');
+            return;
+        }
+
         try {
-            await login(email, password);
-            navigate('/dashboard');
+            const data = await login(email, password);
+            if (data.role !== role) {
+                logout();
+                toast.error(`Access denied: You are registered as ${data.role}, not ${role}`);
+                return;
+            }
+
+            toast.success('Login successful! Redirecting...');
+
+            if (data.role === 'admin') navigate('/admin-dashboard');
+            else if (data.role === 'fleet_manager') navigate('/fleet-dashboard');
+            else if (data.role === 'partner') navigate('/dashboard');
+            else navigate('/');
         } catch (err) {
-            setError(err.message || 'Login failed');
+            toast.error(err.message || 'Login failed');
         }
     };
 
@@ -34,11 +50,11 @@ function LandingPage() {
                 </div>
 
                 <nav className="flex items-center gap-8">
-                    <a href="#" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Contact</a>
+                    <Link to="/contact" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Contact</Link>
                     <a href="#" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Help</a>
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors shadow-sm shadow-blue-600/20">
+                    <Link to="/signup" className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors shadow-sm shadow-blue-600/20">
                         Sign Up
-                    </button>
+                    </Link>
                 </nav>
             </header>
 
@@ -116,7 +132,7 @@ function LandingPage() {
                             <div className="space-y-1.5">
                                 <div className="flex items-center justify-between">
                                     <label className="text-sm font-medium text-slate-700">Password</label>
-                                    <a href="#" className="text-xs font-semibold text-blue-600 hover:text-blue-700">Forgot Password?</a>
+                                    {/* <a href="#" className="text-xs font-semibold text-blue-600 hover:text-blue-700">Forgot Password?</a> */}
                                 </div>
                                 <div className="relative group">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -148,7 +164,7 @@ function LandingPage() {
                                         className={`block w-full pl-10 pr-10 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm appearance-none bg-white ${!role ? 'text-slate-500' : 'text-slate-900'}`}
                                     >
                                         <option value="" disabled>Choose role</option>
-                                        <option value="driver">Logistics Driver</option>
+                                        <option value="partner">Logistics Driver</option>
                                         <option value="fleet_manager">Fleet Manager</option>
                                         <option value="admin">Admin</option>
                                     </select>
@@ -174,7 +190,7 @@ function LandingPage() {
 
                         <div className="mt-6 text-center">
                             <p className="text-sm text-slate-500">
-                                Don't have a partner account? <a href="#" className="font-semibold text-blue-600 hover:text-blue-700">Apply Now</a>
+                                Don't have a partner account? <Link to="/signup" className="font-semibold text-blue-600 hover:text-blue-700">Apply Now</Link>
                             </p>
                         </div>
                     </div>
@@ -184,7 +200,7 @@ function LandingPage() {
             {/* Footer */}
             <footer className="max-w-7xl mx-auto px-6 py-8 border-t border-slate-200 mt-auto w-full">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400">
-                    <p>© 2024 RouteX Logistics Solutions. All rights reserved.</p>
+                    <p>© {new Date().getFullYear()} RouteX Logistics Solutions. All rights reserved.</p>
                     <div className="flex gap-6">
                         <a href="#" className="hover:text-slate-600 transition-colors">Privacy Policy</a>
                         <a href="#" className="hover:text-slate-600 transition-colors">Terms of Service</a>

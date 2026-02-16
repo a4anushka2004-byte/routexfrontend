@@ -1,4 +1,4 @@
-const API_URL = 'https://routex-backend-9xhe.onrender.com/api';
+const API_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : 'http://localhost:5000/api';
 
 const getHeaders = () => {
     const token = localStorage.getItem('token');
@@ -11,16 +11,23 @@ const getHeaders = () => {
 export const api = {
     // Auth
     login: async (email, password) => {
-        const response = await fetch(`${API_URL}/auth/login`, {
-            method: 'POST',
-            headers: getHeaders(),
-            body: JSON.stringify({ email, password })
-        });
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Login failed');
+        try {
+            const response = await fetch(`${API_URL}/auth/login`, {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify({ email, password })
+            });
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Login failed');
+            }
+            return response.json();
+        } catch (error) {
+            if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+                throw new Error('Connect error: Backend server is not reachable. Please ensure it is running.');
+            }
+            throw error;
         }
-        return response.json();
     },
 
     register: async (userData) => {
@@ -56,7 +63,20 @@ export const api = {
         return response.json();
     },
 
-    getWalletBalance: async () => {
+    updateProfile: async (profileData) => {
+        const response = await fetch(`${API_URL}/driver/profile`, {
+            method: 'PUT',
+            headers: getHeaders(),
+            body: JSON.stringify(profileData)
+        });
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to update profile');
+        }
+        return response.json();
+    },
+
+    getWallet: async () => {
         const response = await fetch(`${API_URL}/driver/wallet`, {
             method: 'GET',
             headers: getHeaders()

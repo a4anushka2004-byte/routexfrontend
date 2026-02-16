@@ -3,12 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Wallet, User, Settings, Bell, Star, CheckCircle } from 'lucide-react';
 import DashboardLayout from '../components/DashboardLayout';
 import { useDriver } from '../context/DriverContext';
+import { useSocket } from '../context/SocketContext';
+import { useGPSTracking } from '../hooks/useGPSTracking';
+import OrderAssignmentModal from '../components/driver/OrderAssignmentModal';
 import { api } from '../services/api';
+import { toast } from 'sonner';
 
 function PartnerDashboard() {
     const navigate = useNavigate();
-    const { user, isOnline, activeOrder, walletBalance, completeOrder } = useDriver();
+    const { user, isOnline, activeOrder, walletBalance, completeOrder, acceptOrder } = useDriver();
+    const { notifications, clearNotification } = useSocket();
     const [orders, setOrders] = useState([]);
+
+    // Start GPS tracking if there's an active order
+    useGPSTracking(!!activeOrder);
 
     useEffect(() => {
         if (isOnline && !activeOrder) {
@@ -25,11 +33,38 @@ function PartnerDashboard() {
         }
     };
 
-    const displayOrders = orders;
+    const handleAcceptOrder = async (orderId) => {
+        try {
+            await acceptOrder(orderId);
+            toast.success('Order accepted! Navigate to pickup.');
+            // Clear the notification if it originated from one
+            const index = notifications.findIndex(n => n.data._id === orderId);
+            if (index !== -1) clearNotification(index);
+        } catch (error) {
+            toast.error('Failed to accept order');
+        }
+    };
+
+    const handleRejectOrder = (index) => {
+        clearNotification(index);
+        toast.info('Order declined');
+    };
+
+    const latestOrderNotif = notifications.find(n => n.type === 'new_order');
+    const orderNotifIndex = notifications.findIndex(n => n.type === 'new_order');
 
     return (
         <DashboardLayout>
             <div className="p-8">
+                {/* Real-time Order Modal */}
+                {latestOrderNotif && (
+                    <OrderAssignmentModal
+                        order={latestOrderNotif.data}
+                        onAccept={handleAcceptOrder}
+                        onReject={() => handleRejectOrder(orderNotifIndex)}
+                    />
+                )}
+
                 {/* Header */}
                 <header className="flex justify-between items-center mb-8">
                     <h2 className="text-2xl font-bold text-slate-800">
@@ -153,13 +188,13 @@ function PartnerDashboard() {
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-bold text-slate-800">Nearby Opportunities</h3>
                                 <div className="flex items-center gap-2 text-xs text-slate-400">
-                                    <span>Auto-refresh in 30s</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" /><path d="M16 16l5 5v-5" /><path d="M21 21v-5h-5" /></svg>
+                                    <span>Real-time updates active</span>
+                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
-                                {displayOrders.map((order, idx) => (
+                                {orders.map((order, idx) => (
                                     <div key={idx} className="bg-white border border-slate-100 rounded-xl p-5 hover:border-blue-200 hover:shadow-md transition-all group">
                                         <div className="flex justify-between items-start mb-4">
                                             <div className="flex gap-3">
@@ -190,7 +225,7 @@ function PartnerDashboard() {
                                         </div>
 
                                         <button
-                                            onClick={() => navigate('/delivery-request', { state: { order } })}
+                                            onClick={() => handleAcceptOrder(order._id)}
                                             className="w-full py-2.5 rounded-lg bg-slate-50 text-slate-900 font-semibold text-sm hover:bg-slate-900 hover:text-white transition-colors flex items-center justify-center gap-2 group-hover:bg-slate-900 group-hover:text-white"
                                         >
                                             Accept Order
