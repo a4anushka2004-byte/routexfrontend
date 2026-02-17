@@ -29,7 +29,7 @@ function LandingPage() {
 
             if (data.role === 'admin') navigate('/admin-dashboard');
             else if (data.role === 'fleet_manager') navigate('/fleet-dashboard');
-            else if (data.role === 'partner') navigate('/dashboard');
+            else if (data.role === 'driver') navigate('/dashboard');
             else navigate('/');
         } catch (err) {
             toast.error(err.message || 'Login failed');
@@ -105,7 +105,7 @@ function LandingPage() {
                 <div className="w-full max-w-md mx-auto">
                     <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/60 p-8 border border-slate-100">
                         <div className="mb-6">
-                            <h2 className="text-2xl font-bold text-slate-900">Partner Login</h2>
+                            <h2 className="text-2xl font-bold text-slate-900">Driver Login</h2>
                             <p className="text-sm text-slate-500 mt-1">Please enter your credentials to access the portal</p>
                         </div>
 
@@ -151,7 +151,7 @@ function LandingPage() {
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-sm font-medium text-slate-700">Select Partner Type</label>
+                                <label className="text-sm font-medium text-slate-700">Select Role</label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <svg className="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -164,7 +164,7 @@ function LandingPage() {
                                         className={`block w-full pl-10 pr-10 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm appearance-none bg-white ${!role ? 'text-slate-500' : 'text-slate-900'}`}
                                     >
                                         <option value="" disabled>Choose role</option>
-                                        <option value="partner">Logistics Driver</option>
+                                        <option value="driver">Driver</option>
                                         <option value="fleet_manager">Fleet Manager</option>
                                         <option value="admin">Admin</option>
                                     </select>
@@ -190,7 +190,7 @@ function LandingPage() {
 
                         <div className="mt-6 text-center">
                             <p className="text-sm text-slate-500">
-                                Don't have a partner account? <Link to="/signup" className="font-semibold text-blue-600 hover:text-blue-700">Apply Now</Link>
+                                Don't have an account? <Link to="/signup" className="font-semibold text-blue-600 hover:text-blue-700">Apply Now</Link>
                             </p>
                         </div>
                     </div>

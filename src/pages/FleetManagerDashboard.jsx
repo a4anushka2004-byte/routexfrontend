@@ -6,7 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import { Map as MapIcon, Navigation, UserCheck, AlertCircle } from 'lucide-react';
 
 const FleetManagerDashboard = () => {
-    const [partners, setPartners] = useState([]);
+    const [drivers, setDrivers] = useState([]);
     const [orders, setOrders] = useState([]);
     const zoneId = localStorage.getItem('zoneId');
 
@@ -15,7 +15,7 @@ const FleetManagerDashboard = () => {
         socketService.joinZone(zoneId);
 
         socketService.onLocationUpdate((data) => {
-            setPartners(prev => {
+            setDrivers(prev => {
                 const idx = prev.findIndex(p => p.id === data.userId);
                 if (idx > -1) {
                     const next = [...prev];
@@ -76,9 +76,9 @@ const FleetManagerDashboard = () => {
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         />
-                        {partners.map(partner => (
-                            <Marker key={partner.id} position={partner.position}>
-                                <Popup>Partner {partner.id} is live</Popup>
+                        {drivers.map(driver => (
+                            <Marker key={driver.id} position={driver.position}>
+                                <Popup>Driver {driver.id} is live</Popup>
                             </Marker>
                         ))}
                     </MapContainer>

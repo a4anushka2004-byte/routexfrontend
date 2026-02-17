@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowUpRight, ArrowDownLeft, Wallet as WalletIcon, Calendar, Download } from 'lucide-react';
 import DashboardLayout from '../components/DashboardLayout';
 import { useDriver } from '../context/DriverContext';
+import { api } from '../services/api';
 
 function Wallet() {
     const { walletBalance } = useDriver();
@@ -11,7 +12,7 @@ function Wallet() {
     useEffect(() => {
         const fetchWalletData = async () => {
             try {
-                const data = await api.getWallet();
+                const data = await api.getTransactions();
                 setTransactions(data.transactions.map(t => ({
                     id: t._id,
                     type: t.type,

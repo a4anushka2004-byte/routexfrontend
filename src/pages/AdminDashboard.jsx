@@ -60,7 +60,7 @@ const AdminDashboard = () => {
             <h1 className="text-2xl font-bold mb-8 text-black dark:text-white">Admin Control Panel</h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <StatCard icon={<Users className="w-6 h-6" />} label="Total Partners" value="124" trend="+3.2%" />
+                <StatCard icon={<Users className="w-6 h-6" />} label="Total Drivers" value="124" trend="+3.2%" />
                 <StatCard icon={<Package className="w-6 h-6" />} label="Total Orders" value="1,854" trend="+12.4%" />
                 <StatCard icon={<TrendingUp className="w-6 h-6" />} label="Revenue" value="₹45.2K" trend="+8.1%" />
                 <StatCard icon={<CreditCard className="w-6 h-6" />} label="Payouts" value="₹12.8K" trend="-2.4%" />

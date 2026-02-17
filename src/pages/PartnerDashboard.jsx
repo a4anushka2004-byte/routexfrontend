@@ -76,7 +76,7 @@ function PartnerDashboard() {
                         </button>
                         <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
                             <div className="text-right">
-                                <p className="text-sm font-semibold text-slate-900">{user?.name || 'Partner'}</p>
+                                <p className="text-sm font-semibold text-slate-900">{user?.name || 'Driver'}</p>
                                 <p className="text-xs text-slate-500 tracking-wide">ID: {user?._id ? `#RX-${user._id.slice(-4).toUpperCase()}` : 'Loading...'}</p>
                             </div>
                             <img src={`https://ui-avatars.com/api/?name=${user?.name || 'P'}&background=random`} alt="Avatar" className="w-10 h-10 rounded-full border border-slate-200 object-cover" />
@@ -117,7 +117,7 @@ function PartnerDashboard() {
 
                     <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
                         <div className="flex justify-between items-start mb-4">
-                            <span className="text-slate-500 text-sm font-medium">Partner Rating</span>
+                            <span className="text-slate-500 text-sm font-medium">Driver Rating</span>
                             <div className="bg-amber-50 p-1.5 rounded text-amber-500">
                                 <Star size={16} fill="currentColor" />
                             </div>

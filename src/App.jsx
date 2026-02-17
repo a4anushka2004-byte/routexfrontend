@@ -33,16 +33,16 @@ function App() {
 
             {/* Partner Routes */}
             <Route path="/dashboard" element={
-              <ProtectedRoute roles={['partner']}>
+              <ProtectedRoute roles={['driver']}>
                 <PartnerDashboard />
               </ProtectedRoute>
             } />
-            <Route path="/wallet" element={<ProtectedRoute roles={['partner']}><Wallet /></ProtectedRoute>} />
+            <Route path="/wallet" element={<ProtectedRoute roles={['driver']}><Wallet /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-            <Route path="/delivery-request" element={<ProtectedRoute roles={['partner']}><DeliveryRequest /></ProtectedRoute>} />
-            <Route path="/active-order" element={<ProtectedRoute roles={['partner']}><ActiveOrder /></ProtectedRoute>} />
-            <Route path="/drop-off" element={<ProtectedRoute roles={['partner']}><DropOff /></ProtectedRoute>} />
+            <Route path="/delivery-request" element={<ProtectedRoute roles={['driver']}><DeliveryRequest /></ProtectedRoute>} />
+            <Route path="/active-order" element={<ProtectedRoute roles={['driver']}><ActiveOrder /></ProtectedRoute>} />
+            <Route path="/drop-off" element={<ProtectedRoute roles={['driver']}><DropOff /></ProtectedRoute>} />
             <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
 
             {/* Fleet Manager Routes */}

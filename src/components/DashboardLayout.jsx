@@ -26,7 +26,7 @@ function DashboardLayout({ children }) {
                     </div>
                     <div className="leading-tight">
                         <h1 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">RouteX</h1>
-                        <p className="text-[10px] uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400">Partner Portal</p>
+                        <p className="text-[10px] uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400">Driver Portal</p>
                     </div>
                 </div>
 

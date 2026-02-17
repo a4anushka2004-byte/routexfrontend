@@ -1,11 +1,10 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { api } from '../services/api';
+import { SocketProvider } from './SocketContext';
 
 const DriverContext = createContext();
 
 export const useDriver = () => useContext(DriverContext);
-
-import { SocketProvider } from './SocketContext';
 
 export const DriverProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -13,7 +12,6 @@ export const DriverProvider = ({ children }) => {
     const [activeOrder, setActiveOrder] = useState(null);
     const [walletBalance, setWalletBalance] = useState(0);
 
-    // ... existing useEffect and functions ...
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
@@ -31,7 +29,9 @@ export const DriverProvider = ({ children }) => {
             setWalletBalance(walletInfo.wallet.balance);
         } catch (error) {
             console.error('Failed to fetch profile', error);
-            logout();
+            if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+                logout();
+            }
         }
     };
 
@@ -44,7 +44,7 @@ export const DriverProvider = ({ children }) => {
             if (data.zone) localStorage.setItem('zoneId', data.zone);
             setUser(data);
             setIsOnline(data.isOnline);
-            setWalletBalance(data.walletBalance || 0);
+            setWalletBalance(data.walletBalance || (data.wallet && data.wallet.balance) || 0);
             return data;
         } catch (error) {
             throw error;
@@ -60,7 +60,7 @@ export const DriverProvider = ({ children }) => {
             if (data.zone) localStorage.setItem('zoneId', data.zone);
             setUser(data);
             setIsOnline(data.isOnline);
-            setWalletBalance(data.walletBalance || 0);
+            setWalletBalance(data.walletBalance || (data.wallet && data.wallet.balance) || 0);
             return data;
         } catch (error) {
             throw error;
@@ -88,7 +88,7 @@ export const DriverProvider = ({ children }) => {
     };
 
     const startShift = () => {
-        toggleOnline(); // Re-use toggle or force true if API supports it
+        toggleOnline();
     };
 
     const goOffline = async () => {

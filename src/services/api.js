@@ -95,6 +95,15 @@ export const api = {
         return response.json();
     },
 
+    getOrders: async () => {
+        const response = await fetch(`${API_URL}/orders`, {
+            method: 'GET',
+            headers: getHeaders()
+        });
+        if (!response.ok) throw new Error('Failed to fetch orders');
+        return response.json();
+    },
+
     acceptOrder: async (orderId) => {
         const response = await fetch(`${API_URL}/orders/${orderId}/accept`, {
             method: 'PUT',
@@ -110,6 +119,15 @@ export const api = {
             headers: getHeaders()
         });
         if (!response.ok) throw new Error('Failed to complete order');
+        return response.json();
+    },
+
+    getTransactions: async () => {
+        const response = await fetch(`${API_URL}/transactions/my`, {
+            method: 'GET',
+            headers: getHeaders()
+        });
+        if (!response.ok) throw new Error('Failed to fetch transactions');
         return response.json();
     }
 };

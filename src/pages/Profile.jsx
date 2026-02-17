@@ -13,7 +13,7 @@ function Profile() {
             <div className="p-4 lg:p-8">
                 <header className="mb-8 flex justify-between items-center">
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Partner Profile</h1>
+                        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Driver Profile</h1>
                         <p className="text-sm text-slate-500 dark:text-slate-400">Manage your account and preferences</p>
                     </div>
                 </header>
@@ -32,8 +32,8 @@ function Profile() {
                                 </div>
                             </div>
 
-                            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{user?.name || 'Partner Name'}</h2>
-                            <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">{user?.role === 'driver' ? 'Logistics Partner' : user?.role || 'Partner'}</p>
+                            <h2 className="text-xl font-bold text-slate-900 dark:text-white">{user?.name || 'Driver Name'}</h2>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">{user?.role === 'driver' ? 'Logistics Driver' : user?.role || 'Driver'}</p>
 
                             <div className="inline-flex items-center gap-1 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full text-blue-700 dark:text-blue-400 text-xs font-semibold mt-2">
                                 ID: {user?._id ? `#RX-${user._id.slice(-4).toUpperCase()}` : 'Loading...'}

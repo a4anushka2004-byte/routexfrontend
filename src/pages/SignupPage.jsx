@@ -148,7 +148,7 @@ function SignupPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-semibold text-slate-700">Partner Type</label>
+                            <label className="text-sm font-semibold text-slate-700">Role</label>
                             <div className="relative">
                                 <select
                                     value={role}
@@ -156,7 +156,7 @@ function SignupPage() {
                                     className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm appearance-none"
                                 >
                                     <option value="">Select your role</option>
-                                    <option value="driver">Logistics Driver</option>
+                                    <option value="driver">Driver</option>
                                     <option value="fleet_manager">Fleet Manager</option>
                                     <option value="admin">Admin</option>
                                 </select>
